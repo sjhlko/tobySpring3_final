@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserDaoTest {
     @Test
     void addAndSelect() throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao();
-        User user = new User ("11111","hi","1234");
+        UserDao userDao = new UserDaoFactory().awsUserDao();
+        User user = new User ("345","hi","1234");
         userDao.add(user);
-        User selectedUser = userDao.findById("11111");
+        User selectedUser = userDao.findById("345");
         Assertions.assertEquals("hi",selectedUser.getName());
     }
 

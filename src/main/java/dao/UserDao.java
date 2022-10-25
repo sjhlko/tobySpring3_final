@@ -10,6 +10,9 @@ public class UserDao {
     public  UserDao(){
         this.connectionMaker = new AwsConnectionMaker();
     }
+    public  UserDao(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
     public void add(User user) {
 
         try {
