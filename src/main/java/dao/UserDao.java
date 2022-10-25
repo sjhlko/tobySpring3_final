@@ -3,23 +3,22 @@ package dao;
 import domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker;
-    public  UserDao(){
-        this.connectionMaker = new AwsConnectionMaker();
-    }
-    public  UserDao(ConnectionMaker connectionMaker){
-        this.connectionMaker = connectionMaker;
+    private DataSource dataSource;
+
+    public  UserDao(DataSource dataSource){
+        this.dataSource = dataSource;
     }
 
     public void jdbcContextWithStatementStrategy(StatementStrategy stmt){
         Connection c = null;
         PreparedStatement ps = null;
         try {
-            c = connectionMaker.makeConnection();
+            c = dataSource.getConnection();
             ps = stmt.makePreparedStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -52,7 +51,7 @@ public class UserDao {
         Connection c = null;
         PreparedStatement ps = null;
         try {
-            c = connectionMaker.makeConnection();
+            c = dataSource.getConnection();
             ps = c.prepareStatement("select count(*) from users");
             rs = ps.executeQuery();
             rs.next();
@@ -93,7 +92,7 @@ public class UserDao {
     public User findById(String id) {
         try {
             // DB접속 (ex sql workbeanch실행)
-            Connection c = connectionMaker.makeConnection();
+            Connection c = dataSource.getConnection();
 
             // Query문 작성
             PreparedStatement pstmt = c.prepareStatement("SELECT * FROM users WHERE id = ?");
@@ -119,9 +118,4 @@ public class UserDao {
         }
     }
 
-    public static void main(String[] args) {
-        UserDao userDao = new UserDao();
-        User user = userDao.findById("1");
-        System.out.println(user.getName());
-    }
 }
