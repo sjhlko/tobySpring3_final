@@ -89,9 +89,18 @@ public class UserDao {
 
     }
 
-    public void add(User user) {
-        AddStrategy addStrategy = new AddStrategy(user);
-        jdbcContextWithStatementStrategy(addStrategy);
+    public void add(final User user) {
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement pstmt = null;
+                pstmt = connection.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?);");
+                pstmt.setString(1, user.getId());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getPassword());
+                return pstmt;
+            }
+        });
     }
 
     public User findById(String id) {
