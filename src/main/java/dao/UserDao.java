@@ -1,6 +1,7 @@
 package dao;
 
 import domain.User;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.*;
 import java.util.Map;
@@ -72,13 +73,16 @@ public class UserDao {
 
             // Query문 실행
             ResultSet rs = pstmt.executeQuery();
-            rs.next();
-            User user = new User(rs.getString("id"), rs.getString("name"),
-                    rs.getString("password"));
+            User user = null;
+            if(rs.next()){
+                user = new User(rs.getString("id"), rs.getString("name"),
+                        rs.getString("password"));
 
+            }
             rs.close();
             pstmt.close();
             c.close();
+            if(user == null) throw new EmptyResultDataAccessException(1);
 
             return user;
 
