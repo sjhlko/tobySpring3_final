@@ -41,12 +41,12 @@ public class UserDao {
 
     public User findById(String id) {
         String sql = "select * from users where id = ?";
-        return this.jdbcTemplate.queryForObject(sql, this.rowMapper, id);
+        return this.jdbcTemplate.queryForObject(sql,rowMapper, id);
 
     }
     public List<User> getAll(){
         String sql = "select * from users order by id";
-        return this.jdbcTemplate.query(sql, this.rowMapper);
+        return this.jdbcTemplate.query(sql,rowMapper);
 
     }
 
