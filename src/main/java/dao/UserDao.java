@@ -15,17 +15,9 @@ public class UserDao {
         this.jdbcContext = new JdbcContext(dataSource);
     }
 
-    public void executeSql(String sql){
-        this.jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection connection) throws SQLException {
-                return connection.prepareStatement(sql);
-            }
-        });
-    }
 
     public void deleteAll() throws SQLException{
-        this.executeSql("delete from users");
+        this.jdbcContext.executeSql("delete from users");
 
     }
 
