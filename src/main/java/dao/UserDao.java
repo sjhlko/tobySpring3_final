@@ -42,7 +42,12 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException{
-        jdbcContextWithStatementStrategy(new DeleteAllStrategy());
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection connection) throws SQLException {
+                return connection.prepareStatement("delete from users");
+            }
+        });
 
     }
 
