@@ -15,12 +15,12 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void deleteAll() throws SQLException{
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt){
         Connection c = null;
         PreparedStatement ps = null;
         try {
             c = connectionMaker.makeConnection();
-            ps = new DeleteAllStrategy().makePreparedStatement(c);
+            ps = stmt.makePreparedStatement(c);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -40,6 +40,10 @@ public class UserDao {
                 }
             }
         }
+    }
+
+    public void deleteAll() throws SQLException{
+        jdbcContextWithStatementStrategy(new DeleteAllStrategy());
 
     }
 
@@ -82,27 +86,8 @@ public class UserDao {
     }
 
     public void add(User user) {
-
-        try {
-
-            // DB접속 (ex sql workbeanch실행)
-            Connection c = connectionMaker.makeConnection();
-
-            // Query문 작성
-            PreparedStatement pstmt = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?);");
-            pstmt.setString(1, user.getId());
-            pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getPassword());
-
-            // Query문 실행
-            pstmt.executeUpdate();
-
-            pstmt.close();
-            c.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        AddStrategy addStrategy = new AddStrategy(user);
+        jdbcContextWithStatementStrategy(addStrategy);
     }
 
     public User findById(String id) {
